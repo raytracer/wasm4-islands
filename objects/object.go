@@ -18,6 +18,8 @@ const (
 	GameObjectKindTree = iota + 1
 	// GameObjectKindChurch is a church
 	GameObjectKindChurch
+	// GameObjectKindLumberjack is a lumberjack
+	GameObjectKindLumberjack
 )
 
 // GameObject is a game object with a position and a kind
@@ -46,18 +48,22 @@ func (g *GameObject) GetObjectSize() (byte, byte) {
 		return 1, 1
 	case GameObjectKindChurch:
 		return 4, 3
+	case GameObjectKindLumberjack:
+		return 4, 4
 	default:
 		panic("unknown object kind")
 	}
 }
 
-// GetObjectCosts gets the costs of the object (gold, wood, stone, tools)
+// GetObjectCosts gets the costs of the object (gold, wood, stone)
 func (g *GameObject) GetObjectCosts() (int, byte, byte) {
 	switch g.Kind {
 	case GameObjectKindTree:
 		return 10, 0, 0
 	case GameObjectKindChurch:
 		return 100, 4, 0
+	case GameObjectKindLumberjack:
+		return 50, 2, 0
 	default:
 		panic("unknown object kind")
 	}
@@ -205,6 +211,9 @@ func DrawGameObjects() {
 				break
 			case GameObjectKindChurch:
 				sprites.DrawChurchTile(int(drawable.X), int(drawable.Y), gameObject.X, gameObject.Y)
+				break
+			case GameObjectKindLumberjack:
+				sprites.DrawLumberjackTile(int(drawable.X), int(drawable.Y), gameObject.X, gameObject.Y)
 				break
 			}
 		}

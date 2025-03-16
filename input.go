@@ -41,13 +41,20 @@ func handleInput() {
 	if pressedThisFrame == w4.MOUSE_LEFT {
 		if mode == placementMode {
 			tx, ty := getTileAtMousePosition()
-			church := objects.GameObject{X: byte(tx), Y: byte(ty), Kind: objects.GameObjectKindChurch}
+			building := objects.GameObject{X: byte(tx), Y: byte(ty), Kind: byte(placementType)}
 
-			if church.CanBeBuilt() {
-				church.Place()
+			if building.CanBeBuilt() {
+				building.Place()
 			}
 		} else if mode == buildMode {
-			placementType = objects.GameObjectKindChurch
+			if *w4.MOUSE_Y < 80 {
+				if *w4.MOUSE_X < 80 {
+					placementType = objects.GameObjectKindChurch
+				} else {
+					placementType = objects.GameObjectKindLumberjack
+				}
+			}
+
 			mode = placementMode
 			selectedObject = nil
 		} else if mode == gameMode {

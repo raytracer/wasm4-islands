@@ -71,7 +71,15 @@ func drawScene() {
 	if mode == placementMode {
 		tx, ty := sprites.ScreenToIsoTransform(int(*w4.MOUSE_X)-sprites.CameraX, int(*w4.MOUSE_Y)-sprites.CameraY+sprites.TileHeight)
 		x1, y1 := sprites.IsoTransform(tx, ty)
-		sprites.DrawChurch(x1+sprites.CameraX, y1+sprites.CameraY)
+
+		switch placementType {
+		case objects.GameObjectKindChurch:
+			sprites.DrawChurch(x1+sprites.CameraX, y1+sprites.CameraY)
+			break
+		case objects.GameObjectKindLumberjack:
+			sprites.DrawLumberjack(x1+sprites.CameraX, y1+sprites.CameraY)
+			break
+		}
 	}
 }
 
