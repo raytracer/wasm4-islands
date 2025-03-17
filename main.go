@@ -66,11 +66,15 @@ func drawScene() {
 		island.DrawIsland()
 		objects.DrawGameObjects()
 		drawSelectedRect()
+		drawRadius(selectedObject)
 	}
 
 	if mode == placementMode {
 		tx, ty := sprites.ScreenToIsoTransform(int(*w4.MOUSE_X)-sprites.CameraX, int(*w4.MOUSE_Y)-sprites.CameraY+sprites.TileHeight)
 		x1, y1 := sprites.IsoTransform(tx, ty)
+
+		obj := objects.GameObject{X: byte(tx), Y: byte(ty), Kind: byte(placementType)}
+		drawRadius(&obj)
 
 		switch placementType {
 		case objects.GameObjectKindChurch:

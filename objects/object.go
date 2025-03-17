@@ -41,6 +41,18 @@ type ShipInfo struct {
 	Amount       byte
 }
 
+// GetRadius gets the radius of the object in tiles
+func (g *GameObject) GetRadius() int {
+	switch g.Kind {
+	case GameObjectKindChurch:
+		return 5
+	case GameObjectKindLumberjack:
+		return 3
+	default:
+		return 0
+	}
+}
+
 // GetObjectSize gets the width and height of the object
 func (g *GameObject) GetObjectSize() (byte, byte) {
 	switch g.Kind {
@@ -139,8 +151,32 @@ func (g *GameObject) RemoveTrees() bool {
 func (g *GameObject) Simulate(tick int64) {
 	switch g.Kind {
 	case GameObjectKindChurch:
-		if tick%(60*30) == 0 {
+		if tick%(60*30) == 0 && island.Gold >= 5 {
 			island.Gold -= 5
+		}
+	case GameObjectKindLumberjack:
+		if tick%(60*30) == 0 && island.Gold >= 5 {
+			island.Gold -= 5
+			g.forEachObjOfKind(func(isl *island.Island) {
+				if isl.Wood < 255 {
+					isl.Wood++
+				}
+			}, GameObjectKindTree)
+		}
+	}
+}
+
+func (g *GameObject) forEachObjOfKind(cb func(*island.Island), kind byte) {
+	radius := g.GetRadius()
+	width, height := g.GetObjectSize()
+	for x := int(g.X) + radius; x >= int(g.X)-radius-int(width); x-- {
+		for y := int(g.Y) + radius; y >= int(g.Y)-radius-int(height); y-- {
+			obj := GetObjectAt(x, y)
+
+			if obj != nil && obj.Kind == kind {
+				isl := island.FindIsland(x, y)
+				cb(isl)
+			}
 		}
 	}
 }

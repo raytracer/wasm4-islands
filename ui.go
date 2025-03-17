@@ -2,6 +2,7 @@ package main
 
 import (
 	"cart/island"
+	"cart/objects"
 	"cart/sprites"
 	"cart/w4"
 	"math"
@@ -23,6 +24,29 @@ func drawSelectedRect() {
 		w4.Line(sx1+sprites.CameraX, sy1+sprites.CameraY, tx2+sprites.CameraX, ty2+sprites.CameraY)
 		w4.Line(tx1+sprites.CameraX, ty1+sprites.CameraY, sx2+sprites.CameraX, sy2+sprites.CameraY)
 		w4.Line(sx2+sprites.CameraX, sy2+sprites.CameraY, tx2+sprites.CameraX, ty2+sprites.CameraY)
+	}
+}
+
+func drawRadius(obj *objects.GameObject) {
+	if obj != nil && ticks%60 < 30 {
+		width, height := obj.GetObjectSize()
+		radius := float64(obj.GetRadius())
+
+		if radius > 0 {
+			x, y := float64(obj.X), float64(obj.Y)
+
+			sx1, sy1 := sprites.IsoTransform(x+radius, y+radius)
+			sx2, sy2 := sprites.IsoTransform(x-float64(width)-radius, y-float64(height)-radius)
+
+			tx1, ty1 := sprites.IsoTransform(x-float64(width)-radius, y+radius)
+			tx2, ty2 := sprites.IsoTransform(x+radius, y-float64(height)-radius)
+
+			*w4.DRAW_COLORS = 0x4
+			w4.Line(tx1+sprites.CameraX, ty1+sprites.CameraY, sx1+sprites.CameraX, sy1+sprites.CameraY)
+			w4.Line(sx1+sprites.CameraX, sy1+sprites.CameraY, tx2+sprites.CameraX, ty2+sprites.CameraY)
+			w4.Line(tx1+sprites.CameraX, ty1+sprites.CameraY, sx2+sprites.CameraX, sy2+sprites.CameraY)
+			w4.Line(sx2+sprites.CameraX, sy2+sprites.CameraY, tx2+sprites.CameraX, ty2+sprites.CameraY)
+		}
 	}
 }
 
