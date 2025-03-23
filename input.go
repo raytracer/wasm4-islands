@@ -53,6 +53,10 @@ func handleInput() {
 				} else {
 					placementType = objects.GameObjectKindLumberjack
 				}
+			} else if *w4.MOUSE_Y >= 80 {
+				if *w4.MOUSE_X < 80 {
+					placementType = objects.GameObjectKindPioneer
+				}
 			}
 
 			mode = placementMode

@@ -83,6 +83,9 @@ func drawScene() {
 		case objects.GameObjectKindLumberjack:
 			sprites.DrawLumberjack(x1+sprites.CameraX, y1+sprites.CameraY)
 			break
+		case objects.GameObjectKindPioneer:
+			sprites.DrawPioneer(x1+sprites.CameraX, y1+sprites.CameraY)
+			break
 		}
 	}
 }

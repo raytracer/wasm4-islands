@@ -20,6 +20,8 @@ const (
 	GameObjectKindChurch
 	// GameObjectKindLumberjack is a lumberjack
 	GameObjectKindLumberjack
+	// GameObjectKindPioneer is a pioneer house
+	GameObjectKindPioneer
 )
 
 // GameObject is a game object with a position and a kind
@@ -62,6 +64,8 @@ func (g *GameObject) GetObjectSize() (byte, byte) {
 		return 4, 3
 	case GameObjectKindLumberjack:
 		return 4, 4
+	case GameObjectKindPioneer:
+		return 4, 4
 	default:
 		panic("unknown object kind")
 	}
@@ -76,6 +80,8 @@ func (g *GameObject) GetObjectCosts() (int, byte, byte) {
 		return 100, 4, 0
 	case GameObjectKindLumberjack:
 		return 50, 2, 0
+	case GameObjectKindPioneer:
+		return 25, 4, 0
 	default:
 		panic("unknown object kind")
 	}
@@ -162,6 +168,10 @@ func (g *GameObject) Simulate(tick int64) {
 					isl.Wood++
 				}
 			}, GameObjectKindTree)
+		}
+	case GameObjectKindPioneer:
+		if tick%(60*30) == 0 {
+			island.Gold += 10
 		}
 	}
 }
@@ -250,6 +260,9 @@ func DrawGameObjects() {
 				break
 			case GameObjectKindLumberjack:
 				sprites.DrawLumberjackTile(int(drawable.X), int(drawable.Y), gameObject.X, gameObject.Y)
+				break
+			case GameObjectKindPioneer:
+				sprites.DrawPioneerTile(int(drawable.X), int(drawable.Y), gameObject.X, gameObject.Y)
 				break
 			}
 		}
