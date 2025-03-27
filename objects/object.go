@@ -72,6 +72,20 @@ func (g *GameObject) GetObjectSize() (byte, byte) {
 }
 
 // GetObjectCosts gets the costs of the object (gold, wood, stone)
+func (g *GameObject) GetObjectMaintenance() int {
+	switch g.Kind {
+	case GameObjectKindChurch:
+		return 5
+	case GameObjectKindLumberjack:
+		return 5
+	case GameObjectKindPioneer:
+		return -10
+	default:
+		return 0
+	}
+}
+
+// GetObjectCosts gets the costs of the object (gold, wood, stone)
 func (g *GameObject) GetObjectCosts() (int, byte, byte) {
 	switch g.Kind {
 	case GameObjectKindTree:
@@ -153,25 +167,28 @@ func (g *GameObject) RemoveTrees() bool {
 	return true
 }
 
+const tickRate = 60 * 30
+
 // Simulate simulates the object for the current tick count
 func (g *GameObject) Simulate(tick int64) {
+	cost := g.GetObjectMaintenance()
+	if tick%(tickRate) == 0 && island.Gold >= cost {
+		island.Gold -= cost
+	}
 	switch g.Kind {
 	case GameObjectKindChurch:
-		if tick%(60*30) == 0 && island.Gold >= 5 {
-			island.Gold -= 5
+		if tick%(tickRate) == 0 {
+			g.forEachObjOfKind(func(isl *island.Island) {
+				island.Gold += 5
+			}, GameObjectKindPioneer)
 		}
 	case GameObjectKindLumberjack:
-		if tick%(60*30) == 0 && island.Gold >= 5 {
-			island.Gold -= 5
+		if tick%(tickRate) == 0 {
 			g.forEachObjOfKind(func(isl *island.Island) {
 				if isl.Wood < 255 {
 					isl.Wood++
 				}
 			}, GameObjectKindTree)
-		}
-	case GameObjectKindPioneer:
-		if tick%(60*30) == 0 {
-			island.Gold += 10
 		}
 	}
 }

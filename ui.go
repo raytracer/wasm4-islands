@@ -69,6 +69,13 @@ func drawSelectedObjectUI() {
 	w4.Rect(160-width, 8, uint(width), 160-8)
 	*w4.DRAW_COLORS = 0x4
 	w4.Line(159-width, 8, 159-width, 160)
+
+	if selectedObject != nil {
+		costs := selectedObject.GetObjectMaintenance()
+		w4.Text("Costs", 115, 10)
+		sprites.DrawGold(125, 25)
+		sprites.DrawNumber(costs, 130, 26, 2)
+	}
 }
 
 func drawStatusLine() {
