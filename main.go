@@ -30,7 +30,7 @@ func start() {
 }
 
 func initGame() {
-	random.InitRand(int64(ticks))
+	random.InitRand(ticks)
 	objects.ClearShipInfos()
 	objects.ClearGameObjects()
 	sprites.ClearDrawables()
