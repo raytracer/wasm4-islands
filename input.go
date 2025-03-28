@@ -65,7 +65,7 @@ func handleInput() {
 			tx, ty := getTileAtMousePosition()
 			obj := objects.GetObjectAt(tx, ty)
 
-			if obj != nil && obj.Kind != objects.GameObjectKindTree {
+			if obj != nil && obj.Kind != objects.GameObjectKindTree && obj.Kind != objects.GameObjectKindMountain {
 				selectedObject = obj
 			} else {
 				selectedObject = nil

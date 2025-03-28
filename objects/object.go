@@ -16,6 +16,8 @@ var ShipInfos = make([]ShipInfo, 10)
 const (
 	// GameObjectKindTree is a tree
 	GameObjectKindTree = iota + 1
+	// GameObjectKindTree is a tree
+	GameObjectKindMountain
 	// GameObjectKindChurch is a church
 	GameObjectKindChurch
 	// GameObjectKindLumberjack is a lumberjack
@@ -60,6 +62,8 @@ func (g *GameObject) GetObjectSize() (byte, byte) {
 	switch g.Kind {
 	case GameObjectKindTree:
 		return 1, 1
+	case GameObjectKindMountain:
+		return 4, 4
 	case GameObjectKindChurch:
 		return 4, 3
 	case GameObjectKindLumberjack:
@@ -97,7 +101,7 @@ func (g *GameObject) GetObjectCosts() (int, byte, byte) {
 	case GameObjectKindPioneer:
 		return 25, 4, 0
 	default:
-		panic("unknown object kind")
+		return 0, 0, 0
 	}
 }
 
@@ -272,6 +276,9 @@ func DrawGameObjects() {
 			case GameObjectKindTree:
 				sprites.DrawTreeTile(int(drawable.X), int(drawable.Y), gameObject.X, gameObject.Y)
 				break
+			case GameObjectKindMountain:
+				sprites.DrawMountainTile(int(drawable.X), int(drawable.Y), gameObject.X, gameObject.Y)
+				break
 			case GameObjectKindChurch:
 				sprites.DrawChurchTile(int(drawable.X), int(drawable.Y), gameObject.X, gameObject.Y)
 				break
@@ -291,10 +298,16 @@ func GenerateGameObjects() {
 	counter := 0
 	for x := 0; x < island.Size; x++ {
 		for y := 0; y < island.Size; y++ {
-			object := GameObject{X: byte(x), Y: byte(y), Kind: GameObjectKindTree}
-			w, h := object.GetObjectSize()
-			if island.CheckLand(x, y, int(w), int(h)) {
-				if random.R.Float64() < 0.04 && counter < len(GameObjects) {
+			if random.R.Float64() < 0.005 && counter < len(GameObjects) {
+				object := GameObject{X: byte(x), Y: byte(y), Kind: GameObjectKindMountain}
+				if object.CanBeBuilt() {
+					GameObjects[counter] = object
+					GameObjects[counter].InsertDrawables(int16(counter))
+					counter++
+				}
+			} else if random.R.Float64() < 0.04 && counter < len(GameObjects) {
+				object := GameObject{X: byte(x), Y: byte(y), Kind: GameObjectKindTree}
+				if object.CanBeBuilt() {
 					GameObjects[counter] = object
 					GameObjects[counter].InsertDrawables(int16(counter))
 					counter++

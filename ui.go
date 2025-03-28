@@ -70,7 +70,7 @@ func drawSelectedObjectUI() {
 	*w4.DRAW_COLORS = 0x4
 	w4.Line(159-width, 8, 159-width, 160)
 
-	if selectedObject != nil {
+	if selectedObject != nil && selectedObject.Kind != objects.GameObjectKindPioneer {
 		costs := selectedObject.GetObjectMaintenance()
 		w4.Text("Costs", 115, 10)
 		sprites.DrawGold(125, 25)
