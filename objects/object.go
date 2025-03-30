@@ -4,7 +4,6 @@ import (
 	"cart/island"
 	"cart/random"
 	"cart/sprites"
-	"cart/w4"
 )
 
 // GameObjects is a list of game objects
@@ -286,7 +285,6 @@ func (g *GameObject) Place() {
 				isl.Stone -= stone
 			}
 
-			w4.Tone(25, 5|(10<<8), 25, w4.TONE_TRIANGLE)
 			break
 		}
 	}
@@ -398,7 +396,7 @@ func GenerateGameObjects() {
 	ship := GameObject{X: byte(10), Y: byte(10), Kind: GameObjectKindShip}
 	GameObjects[counter] = ship
 	GameObjects[counter].InsertDrawables(int16(counter))
-	ShipInfos[0] = ShipInfo{Ref: counter, OffsetX: 0, OffsetY: 0, DestinationX: 0, DestinationY: 0, Direction: 0, Cargo: 0, Amount: 0}
+	ShipInfos[0] = ShipInfo{Ref: counter, OffsetX: 0, OffsetY: 0, DestinationX: 10, DestinationY: 10, Direction: 0, Cargo: 0, Amount: 0}
 }
 
 // SimulateObjects simulates all objects

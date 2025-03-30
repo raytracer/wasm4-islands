@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cart/island"
 	"cart/objects"
 	"cart/sprites"
 	"cart/w4"
@@ -41,8 +42,12 @@ func handleInput() {
 				si := objects.GetShipInfo(selectedObjectRef)
 				if si != nil {
 					tx, ty := getTileAtMousePosition()
-					si.DestinationX = byte(tx)
-					si.DestinationY = byte(ty)
+
+					if !island.CheckIsLand(tx, ty) {
+						si.DestinationX = byte(tx)
+						si.DestinationY = byte(ty)
+						w4.Tone(220|(400<<16), 1, 25, w4.TONE_TRIANGLE)
+					}
 				}
 			}
 		}
@@ -55,6 +60,7 @@ func handleInput() {
 
 			if building.CanBeBuilt() {
 				building.Place()
+				w4.Tone(25, 5|(10<<8), 25, w4.TONE_TRIANGLE)
 			}
 		} else if mode == buildMode {
 			if *w4.MOUSE_Y < 80 {
