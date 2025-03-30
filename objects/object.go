@@ -24,6 +24,8 @@ const (
 	GameObjectKindLumberjack
 	// GameObjectKindPioneer is a pioneer house
 	GameObjectKindPioneer
+	// GameObjectKindShip is a ship
+	GameObjectKindShip
 )
 
 // GameObject is a game object with a position and a kind
@@ -70,6 +72,8 @@ func (g *GameObject) GetObjectSize() (byte, byte) {
 		return 4, 4
 	case GameObjectKindPioneer:
 		return 4, 4
+	case GameObjectKindShip:
+		return 4, 4
 	default:
 		panic("unknown object kind")
 	}
@@ -107,6 +111,11 @@ func (g *GameObject) GetObjectCosts() (int, byte, byte) {
 
 // InsertDrawables inserts the drawables of the game object
 func (g *GameObject) InsertDrawables(index int16) {
+	if g.Kind == GameObjectKindShip {
+		sprites.InsertDrawable(sprites.Drawable{X: byte(g.X), Y: byte(g.Y), Ref: index})
+		return
+	}
+
 	width, height := g.GetObjectSize()
 	for x := g.X - width + 1; x < g.X; x++ {
 		sprites.InsertDrawable(sprites.Drawable{X: byte(x), Y: byte(g.Y), Ref: index})
@@ -174,7 +183,7 @@ func (g *GameObject) RemoveTrees() bool {
 const tickRate = 60 * 30
 
 // Simulate simulates the object for the current tick count
-func (g *GameObject) Simulate(tick int64) {
+func (g *GameObject) Simulate(tick int64, ref int) {
 	cost := g.GetObjectMaintenance()
 	if tick%(tickRate) == 0 && island.Gold >= cost {
 		island.Gold -= cost
@@ -194,6 +203,17 @@ func (g *GameObject) Simulate(tick int64) {
 				}
 			}, GameObjectKindTree)
 		}
+	case GameObjectKindShip:
+		s := GetShipInfo(ref)
+
+		if s != nil {
+			if s.OffsetX < 1 {
+				s.OffsetX += 0.01
+			} else {
+				s.OffsetX = 0
+				g.X += 1
+			}
+		}
 	}
 }
 
@@ -202,7 +222,7 @@ func (g *GameObject) forEachObjOfKind(cb func(*island.Island), kind byte) {
 	width, height := g.GetObjectSize()
 	for x := int(g.X) + radius; x >= int(g.X)-radius-int(width); x-- {
 		for y := int(g.Y) + radius; y >= int(g.Y)-radius-int(height); y-- {
-			obj := GetObjectAt(x, y)
+			obj, _ := GetObjectAt(x, y)
 
 			if obj != nil && obj.Kind == kind {
 				isl := island.FindIsland(x, y)
@@ -288,9 +308,25 @@ func DrawGameObjects() {
 			case GameObjectKindPioneer:
 				sprites.DrawPioneerTile(int(drawable.X), int(drawable.Y), gameObject.X, gameObject.Y)
 				break
+			case GameObjectKindShip:
+				si := GetShipInfo(int(drawable.Ref))
+
+				if si != nil {
+					sprites.DrawShipFrontTile(float64(gameObject.X)+si.OffsetX, float64(gameObject.Y)+si.OffsetY, 0)
+				}
+				break
 			}
 		}
 	}
+}
+
+func GetShipInfo(ref int) *ShipInfo {
+	for i := range ShipInfos {
+		if ShipInfos[i].Ref == ref {
+			return &ShipInfos[i]
+		}
+	}
+	return nil
 }
 
 // GenerateGameObjects generates game objects
@@ -315,13 +351,18 @@ func GenerateGameObjects() {
 			}
 		}
 	}
+
+	ship := GameObject{X: byte(10), Y: byte(10), Kind: GameObjectKindShip}
+	GameObjects[counter] = ship
+	GameObjects[counter].InsertDrawables(int16(counter))
+	ShipInfos[0] = ShipInfo{Ref: counter, OffsetX: 0, OffsetY: 0, DestinationX: 0, DestinationY: 0, State: 0, Cargo: 0, Amount: 0}
 }
 
 // SimulateObjects simulates all objects
 func SimulateObjects(tick int64) {
 	for i := range GameObjects {
 		if GameObjects[i].Kind != 0 {
-			GameObjects[i].Simulate(tick)
+			GameObjects[i].Simulate(tick, i)
 		}
 	}
 }
@@ -334,16 +375,16 @@ func ClearShipInfos() {
 }
 
 // GetObjectAt gets the object at the given position
-func GetObjectAt(x, y int) *GameObject {
+func GetObjectAt(x, y int) (*GameObject, int) {
 	for i := range GameObjects {
 		if GameObjects[i].Kind != 0 {
 			width, height := GameObjects[i].GetObjectSize()
 			if x >= int(GameObjects[i].X)-int(width)+1 && x <= int(GameObjects[i].X) && y >= int(GameObjects[i].Y)-int(height)+1 && y <= int(GameObjects[i].Y) {
-				return &GameObjects[i]
+				return &GameObjects[i], i
 			}
 		}
 	}
-	return nil
+	return nil, -1
 }
 
 // ClearGameObjects clears the game objects

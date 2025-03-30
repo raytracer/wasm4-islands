@@ -60,15 +60,15 @@ func handleInput() {
 			}
 
 			mode = placementMode
-			selectedObject = nil
+			selectedObjectRef = -1
 		} else if mode == gameMode {
 			tx, ty := getTileAtMousePosition()
-			obj := objects.GetObjectAt(tx, ty)
+			obj, ref := objects.GetObjectAt(tx, ty)
 
 			if obj != nil && obj.Kind != objects.GameObjectKindTree && obj.Kind != objects.GameObjectKindMountain {
-				selectedObject = obj
+				selectedObjectRef = ref
 			} else {
-				selectedObject = nil
+				selectedObjectRef = -1
 			}
 		}
 	}

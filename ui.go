@@ -9,9 +9,19 @@ import (
 )
 
 func drawSelectedRect() {
+	selectedObject := getSelectedObject()
 	if selectedObject != nil && ticks%60 < 30 {
 		width, height := selectedObject.GetObjectSize()
 		x, y := float64(selectedObject.X), float64(selectedObject.Y)
+
+		if selectedObject.Kind == objects.GameObjectKindShip {
+			si := objects.GetShipInfo(selectedObjectRef)
+
+			if si != nil {
+				x += si.OffsetX
+				y += si.OffsetY
+			}
+		}
 
 		sx1, sy1 := sprites.IsoTransform(x, y)
 		sx2, sy2 := sprites.IsoTransform(x-float64(width), y-float64(height))
@@ -52,7 +62,7 @@ func drawRadius(obj *objects.GameObject) {
 
 func drawUI() {
 	if mode == gameMode || mode == placementMode {
-		if selectedObject != nil {
+		if getSelectedObject() != nil {
 			drawSelectedObjectUI()
 		}
 		drawStatusLine()
@@ -69,6 +79,8 @@ func drawSelectedObjectUI() {
 	w4.Rect(160-width, 8, uint(width), 160-8)
 	*w4.DRAW_COLORS = 0x4
 	w4.Line(159-width, 8, 159-width, 160)
+
+	selectedObject := getSelectedObject()
 
 	if selectedObject != nil && selectedObject.Kind != objects.GameObjectKindPioneer {
 		costs := selectedObject.GetObjectMaintenance()

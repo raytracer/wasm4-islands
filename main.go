@@ -22,7 +22,7 @@ var mode = startMode
 var ticks int64 = 0
 var year uint = 1400
 
-var selectedObject *objects.GameObject = nil
+var selectedObjectRef int = -1
 var placementType = objects.GameObjectKindChurch
 
 //go:export start
@@ -61,12 +61,19 @@ func draw() {
 	drawUI()
 }
 
+func getSelectedObject() *objects.GameObject {
+	if selectedObjectRef != -1 {
+		return &objects.GameObjects[selectedObjectRef]
+	}
+	return nil
+}
+
 func drawScene() {
 	if mode == gameMode || mode == placementMode {
 		island.DrawIsland()
 		objects.DrawGameObjects()
 		drawSelectedRect()
-		drawRadius(selectedObject)
+		drawRadius(getSelectedObject())
 	}
 
 	if mode == placementMode {
