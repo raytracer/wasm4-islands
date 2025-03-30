@@ -35,6 +35,16 @@ func handleInput() {
 	if pressedThisFrame == w4.MOUSE_RIGHT {
 		if mode == placementMode {
 			mode = gameMode
+		} else if mode == gameMode {
+			obj := getSelectedObject()
+			if obj != nil && obj.Kind == objects.GameObjectKindShip {
+				si := objects.GetShipInfo(selectedObjectRef)
+				if si != nil {
+					tx, ty := getTileAtMousePosition()
+					si.DestinationX = byte(tx)
+					si.DestinationY = byte(ty)
+				}
+			}
 		}
 	}
 

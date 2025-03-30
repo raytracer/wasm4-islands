@@ -14,6 +14,14 @@ var GameObjects = make([]GameObject, 1000)
 var ShipInfos = make([]ShipInfo, 10)
 
 const (
+	// Destination North
+	NorthEast = iota
+	NorthWest
+	SouthEast
+	SouthWest
+)
+
+const (
 	// GameObjectKindTree is a tree
 	GameObjectKindTree = iota + 1
 	// GameObjectKindTree is a tree
@@ -42,7 +50,7 @@ type ShipInfo struct {
 	OffsetY      float64
 	DestinationX byte
 	DestinationY byte
-	State        byte
+	Direction    byte
 	Cargo        byte
 	Amount       byte
 }
@@ -206,12 +214,41 @@ func (g *GameObject) Simulate(tick int64, ref int) {
 	case GameObjectKindShip:
 		s := GetShipInfo(ref)
 
+		const speed = 0.03
+
 		if s != nil {
-			if s.OffsetX < 1 {
-				s.OffsetX += 0.01
-			} else {
-				s.OffsetX = 0
-				g.X += 1
+			if s.DestinationX > g.X {
+				if s.OffsetX < 1 {
+					s.OffsetX += speed
+				} else {
+					s.OffsetX = 0
+					g.X += 1
+				}
+				s.Direction = SouthEast
+			} else if s.DestinationX < g.X {
+				if s.OffsetX > -1 {
+					s.OffsetX -= speed
+				} else {
+					s.OffsetX = 0
+					g.X -= 1
+				}
+				s.Direction = NorthWest
+			} else if s.DestinationY > g.Y {
+				if s.OffsetY < 1 {
+					s.OffsetY += speed
+				} else {
+					s.OffsetY = 0
+					g.Y += 1
+				}
+				s.Direction = SouthWest
+			} else if s.DestinationY < g.Y {
+				if s.OffsetY > -1 {
+					s.OffsetY -= speed
+				} else {
+					s.OffsetY = 0
+					g.Y -= 1
+				}
+				s.Direction = NorthEast
 			}
 		}
 	}
@@ -312,7 +349,13 @@ func DrawGameObjects() {
 				si := GetShipInfo(int(drawable.Ref))
 
 				if si != nil {
-					sprites.DrawShipFrontTile(float64(gameObject.X)+si.OffsetX, float64(gameObject.Y)+si.OffsetY, 0)
+					flip := false
+
+					if si.Direction == SouthEast {
+						flip = true
+					}
+
+					sprites.DrawShipFrontTile(float64(gameObject.X)+si.OffsetX, float64(gameObject.Y)+si.OffsetY, flip)
 				}
 				break
 			}
@@ -355,7 +398,7 @@ func GenerateGameObjects() {
 	ship := GameObject{X: byte(10), Y: byte(10), Kind: GameObjectKindShip}
 	GameObjects[counter] = ship
 	GameObjects[counter].InsertDrawables(int16(counter))
-	ShipInfos[0] = ShipInfo{Ref: counter, OffsetX: 0, OffsetY: 0, DestinationX: 0, DestinationY: 0, State: 0, Cargo: 0, Amount: 0}
+	ShipInfos[0] = ShipInfo{Ref: counter, OffsetX: 0, OffsetY: 0, DestinationX: 0, DestinationY: 0, Direction: 0, Cargo: 0, Amount: 0}
 }
 
 // SimulateObjects simulates all objects
