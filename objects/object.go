@@ -33,6 +33,8 @@ const (
 	GameObjectKindPioneer
 	// GameObjectKindShip is a ship
 	GameObjectKindShip
+	// GameObjectKindWarehouse is a warehouse
+	GameObjectKindWarehouse
 )
 
 // GameObject is a game object with a position and a kind
@@ -81,6 +83,8 @@ func (g *GameObject) GetObjectSize() (byte, byte) {
 		return 4, 4
 	case GameObjectKindShip:
 		return 4, 4
+	case GameObjectKindWarehouse:
+		return 3, 5
 	default:
 		panic("unknown object kind")
 	}
@@ -93,6 +97,8 @@ func (g *GameObject) GetObjectMaintenance() int {
 		return 5
 	case GameObjectKindLumberjack:
 		return 5
+	case GameObjectKindWarehouse:
+		return 10
 	case GameObjectKindPioneer:
 		return -10
 	default:
@@ -111,6 +117,8 @@ func (g *GameObject) GetObjectCosts() (int, byte, byte) {
 		return 50, 2, 0
 	case GameObjectKindPioneer:
 		return 25, 4, 0
+	case GameObjectKindWarehouse:
+		return 100, 6, 0
 	default:
 		return 0, 0, 0
 	}
@@ -165,6 +173,12 @@ func (g *GameObject) CanBeBuilt() bool {
 			if obj.X >= (g.X-thisWidth+1) && obj.X-otherWidth+1 <= g.X && obj.Y >= (g.Y-thisHeight+1) && obj.Y-otherHeight+1 <= g.Y {
 				return false
 			}
+		}
+	}
+
+	if g.Kind == GameObjectKindWarehouse {
+		if island.CheckLand(int(g.X)+1, int(g.Y), 1, int(h)) {
+			return false
 		}
 	}
 
@@ -342,6 +356,9 @@ func DrawGameObjects() {
 				break
 			case GameObjectKindPioneer:
 				sprites.DrawPioneerTile(int(drawable.X), int(drawable.Y), gameObject.X, gameObject.Y)
+				break
+			case GameObjectKindWarehouse:
+				sprites.DrawWarehouseTile(int(drawable.X), int(drawable.Y), gameObject.X, gameObject.Y)
 				break
 			case GameObjectKindShip:
 				si := GetShipInfo(int(drawable.Ref))

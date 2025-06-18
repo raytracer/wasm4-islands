@@ -93,6 +93,9 @@ func drawScene() {
 		case objects.GameObjectKindPioneer:
 			sprites.DrawPioneer(x1+sprites.CameraX, y1+sprites.CameraY)
 			break
+		case objects.GameObjectKindWarehouse:
+			sprites.DrawWarehouse(x1+sprites.CameraX, y1+sprites.CameraY)
+			break
 		}
 	}
 }

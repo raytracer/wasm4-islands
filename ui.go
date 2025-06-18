@@ -141,6 +141,12 @@ func drawBuildUI() {
 	w4.Rect(4, 83, 64, 64)
 	*w4.DRAW_COLORS = 0x3
 	w4.Text("House", 16, 150)
+
+	sprites.DrawWarehouse(112, 147)
+	*w4.DRAW_COLORS = 0x30
+	w4.Rect(88, 83, 64, 64)
+	*w4.DRAW_COLORS = 0x3
+	w4.Text("Warehouse", 85, 150)
 }
 
 func drawMiniMap() {

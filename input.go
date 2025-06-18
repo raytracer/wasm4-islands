@@ -72,6 +72,8 @@ func handleInput() {
 			} else if *w4.MOUSE_Y >= 80 {
 				if *w4.MOUSE_X < 80 {
 					placementType = objects.GameObjectKindPioneer
+				} else {
+					placementType = objects.GameObjectKindWarehouse
 				}
 			}
 
