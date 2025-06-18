@@ -2,6 +2,12 @@
 
 A game written in Go for the [WASM-4](https://wasm4.org) fantasy console.
 
+
+[v1.webm](https://github.com/user-attachments/assets/ca3bb749-18ac-4a18-9b29-b47b1907b8be)
+
+[v2.webm](https://github.com/user-attachments/assets/122dcc54-a517-4397-9201-4e8111d0ca22)
+
+
 ## Building
 
 Build the cart by running:
