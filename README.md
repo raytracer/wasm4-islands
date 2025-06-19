@@ -1,4 +1,4 @@
-# wasm4-go
+# Wasm4 Islands
 
 A game written in Go for the [WASM-4](https://wasm4.org) fantasy console.
 
